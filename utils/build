@@ -1,0 +1,2 @@
+gcc -c srvlog.c 2>errlog
+gcc -c ipcr.c 2>erripc

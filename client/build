@@ -1,0 +1,1 @@
+gcc -c client.c 2>errlog

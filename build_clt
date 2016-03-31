@@ -1,6 +1,7 @@
-killall client
-gcc -c srvlog.c 2>errlog
-gcc -c ipcr.c 2>erripc
-gcc -c client.c 2>cl_err
-gcc -O2 -I. -lpigpio -lrt -lpthread ipcr.o srvlog.o client.o cl_main.c -o cl_cli 2>clm_err
-#gcc -O2 -I. -lpigpio -lrt -lpthread ipcr.o srvlog.o main1.c -o serv 2>err
+killall cl_cli
+cd client
+./build
+cd ../utils
+./build
+cd ..
+gcc -O2 -I. -lpigpio -lrt -lpthread ./utils/ipcr.o ./utils/srvlog.o ./client/client.o ./client/cl_main.c -o cl_cli 2>clm_err

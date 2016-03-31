@@ -12,8 +12,8 @@
 #include <pigpio.h>
 
 #include <fcntl.h>
-#include "srvlog.h"
-#include "ipcr.h"
+#include "utils/srvlog.h"
+#include "utils/ipcr.h"
 
 /*Port Definitions*/
 #define DATA  10
