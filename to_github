@@ -1,0 +1,5 @@
+git add .
+git commit -m "2016-04-01 19:39"
+git push origin master
+git remote add origin https://github.com/antgur/rpi_runn_line.git
+git push origin master

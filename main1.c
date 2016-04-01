@@ -89,7 +89,7 @@ int pagr()
     char bu[80]; // log teksto buferis
     unsigned long di[8]; //raidės imidžo šablonas
     int ipc; //ipcs prisijungimo indikatorius
-    int i,k;
+    int i,k,ii;
     for (i=0;i<8;i++) di[i]=0; //inicializuoju kintamaji
 
     srvlog("Main module started");
@@ -129,9 +129,9 @@ int pagr()
     while (ipcr_get(1) >= 0)
     {
 	if (ipcr_get(1)==0) ipcr_settx(1); //jeigu eilėje nėra raidžių
-	i = ipcr_gettx(); //ištraukiu rodomos raidės indeksą
+	ii = ipcr_gettx(); //ištraukiu rodomos raidės indeksą
 	// į di masyva padedu raidės trafaretą
-	for (ipc=0;ipc<8;ipc++) di[ipc] = di[ipc] + 256*ipcr_getchar(i,ipc);
+	for (ipc=0;ipc<8;ipc++) di[ipc] = di[ipc] + 256*ipcr_getchar(ii,ipc);
 
 	for (k=0;k<8;k++) { //vykdau išvedimą
 	    for (i=0;i<8;i++) MAX7219Send(8-i,di[i]);//išvedu raidę
@@ -139,7 +139,8 @@ int pagr()
 	    gpioDelay(ipcr_get(2)*10000); // vėlinimas postūmio žingsniui
 	}
 	// sustabdau raidę centre
-	gpioDelay(ipcr_get(2)*200000);
+	if (ii == 1) gpioDelay(ipcr_get(2)*200000);
+	else gpioDelay(ipcr_get(2)*20000);
 //	time_sleep(2.0);
 	
     }
