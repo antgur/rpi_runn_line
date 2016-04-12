@@ -8,7 +8,7 @@ kintamuosius.
 
 Programa cl_serv aptarnauja 8x8 LED indikatorių, stumdama tekstą,
 kurio raidžių kodas talpinamas shmem stumiamų raidžių masyve. Stūmimo 
-greitis priklauso nuo konstantų, patalpintų į shmem kintamuosius. Setalus
+greitis priklauso nuo konstantų, patalpintų į shmem kintamuosius. Detalus
 kintamųjų aprašymas duotas faile utils/ipcr.h.
 
 Programa cl_cli aptarnauja klientus, prisijungiančius TCP/IP protokolu.
