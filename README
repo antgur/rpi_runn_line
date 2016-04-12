@@ -1,1 +1,18 @@
+Projektas:
+RPI4 8x8 LED segmentų bėganti eilutė
+Sudėtis:
+Dvi programos, veikiančios serverio režimu, susietos per shmem bendrus
+kintamuosius.
+1. cl_serv
+2. cl_cli
 
+Programa cl_serv aptarnauja 8x8 LED indikatorių, stumdama tekstą,
+kurio raidžių kodas talpinamas shmem stumiamų raidžių masyve. Stūmimo 
+greitis priklauso nuo konstantų, patalpintų į shmem kintamuosius. Setalus
+kintamųjų aprašymas duotas faile utils/ipcr.h.
+
+Programa cl_cli aptarnauja klientus, prisijungiančius TCP/IP protokolu.
+Pati programa starto metu prisijungia prie branduolio ir veikia klausyklės
+režimu. Prisijungus klientui laukia iš kliento raidžių kodų stūmimui 8x8
+LED ekrane ir po kiekvienos išstumtos raidės grąžina likusių raidžių
+buferyje skaičių.
