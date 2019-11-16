@@ -15,7 +15,7 @@
 //#include "client.h"
 
 #define MYPORT 4441
-// startuoju programa, kuri atrisama nuo terminalo
+// starting program as system service
 
 int pagr();
 
@@ -38,7 +38,7 @@ int main()
     return 0;
 }
 
-// pagrindine programa - jau atrista nuo terminalo
+// main program just running as system service
 int pagr()
 {
 int sockMain, sockClient, length, child;
@@ -51,47 +51,44 @@ int port;
 
     signal(SIGCHLD,SIG_IGN);
 
-  // 1. Sukuriu pagrindini serverio bloka
   if ((sockMain = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    { perror("Serveris negali atidaryti pagrindinio soketo.");
+    { perror("Server can't open main socket.");
     exit(1);
     }
-  // 2. Sudaroma duomenu struktura lokaliu IP adresu saugojimui...
   bzero( &(servAddr.sin_zero), 8);
   servAddr.sin_family = AF_INET;
   servAddr.sin_addr.s_addr = INADDR_ANY;
   servAddr.sin_port = htons (MYPORT);
-  // 3. Socketui suteikiu adresa, parenku porto numeri, irasau ji i TCB
+ 
   if ( bind(sockMain, (struct sockaddr *)&servAddr, sizeof(struct sockaddr))  \
 							    ==-1 )
-    { printf("Serveri priristi nepavyko:%d\n", ntohs(servAddr.sin_port));
-    perror("Uzimtas portas>");
+    { printf("Server binding problem:%d\n", ntohs(servAddr.sin_port));
+    perror("Port is busy");
     exit(1);
     }
 
-  printf("SERVERIS: porto numeris - %d\n", ntohs(servAddr.sin_port));
-  // 4. Sukuriu eile 5 klientu saugojimui
+  printf("SERVER: port numbe - %d\n", ntohs(servAddr.sin_port));
+  
     if ( listen (sockMain, 5) ==-1) {
     perror("listen");
     exit(1);
     }
-  // 5. Laukiu kliento. Sulaukus - grazinu nauja socket deskriptoriu,
-  //    kuri naudos klientas.
+  
+  // waiting for the client TCP connection.
   for ( ; ; ) {
-//  if ( (sockClient = accept(sockMain, 0, 0)) < 0)
   if ( (sockClient = accept(sockMain, (struct sockaddr*)&clAddr, &len)) < 0)
-    { perror("Neteisingas kliento socket.");
+    { perror("Incorrect client socket.");
     exit(1);
     }
-  // 6. Sukuriu dukterini procesa kliento aptarnavimui
+  // Creating child process
   if ( (child = fork()) < 0)
     { 
-    perror("Dukterinio proceso sukurimo klaida.");
+    perror("Child process creation error.");
     exit(1);
     }
-  else if (child == 0)  // tai - dukterinio proceso vykdymo kodas
+  else if (child == 0)  // child process running code follows
     { 
-    close(sockMain);  // dukterinis procesas sockMain daugiau neidomus
+    close(sockMain);  // child process for the sockMain notinteresting any more
     if (clAddr.ss_family == AF_INET) //INET4
     {
 	struct sockaddr_in *s = (struct sockaddr_in *)&clAddr;
@@ -106,7 +103,7 @@ int port;
     close(sockClient);
     exit(0);
     }
-  // 7. Tai - pagrindinis procesas, kurio daugiau nedomina dukterinis procesas
+  // That is main process running alone
   close(sockClient);
   }
 }
