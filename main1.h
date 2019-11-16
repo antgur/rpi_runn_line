@@ -26,28 +26,15 @@
 #define SHUTDOWN      0x0c
 #define DISPLAY_TEST  0x0f
 
-// pertraukimo signalo apdorojimo funkcija
+// signal processing function
 void termination_handler (int signum);
-//siuntimo paruosimo funkcija
+// preparation to send 
 void MAX7219Send (unsigned char reg_number, unsigned char dataout);
-//duomenu siuntimo i MAC7219 funkcija
+// sending to MAC7219 funcion
 void send16bits(unsigned short output);
-// programa, atrista nuo terminalo
+// program as system service
 int pagr();
 
 unsigned char cha[MAX_CHAR][8];
 
 #endif
-// Info apie lazeri ir fotorezistoriu:
-// Lazeris. Kontaktai:
-// - Zeme
-// S +V (+3.3V dega vidutiniskai, +5V dega sviesiai)
-// nepazymetas R1 i S (+V). Paskirtis neaiski: prijungus prie
-// sio kontakto +5V, lazeris beveik nesviecia.
-
-// Fotorezistorius. Kontaktai:
-// - Zeme
-// nepazymetas +5V
-// S signalinis. Jo itampa priklauso nuo apsvietimo.
-
-
