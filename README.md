@@ -1,6 +1,9 @@
 Project:
+
 RPI based four 8x8 LED segments running line
-Consistency:
+
+Structure:
+
 Two software items both running as system services having common variables in 
 share memory section.
 1. cl_serv
