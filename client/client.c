@@ -19,7 +19,7 @@ int childWork(int sockClient, char *ip)
     srvlog("Main process stopped");
     return -1;
   }
-//  ipcr_settx(50);ipcr_settx(55);
+
   ii = 0;
   while (ii == 0) {
 
@@ -37,7 +37,7 @@ int childWork(int sockClient, char *ip)
     }
     usleep(50 * 1000);
   }
-// tęsti čia
+// continue here
   sprintf(ss,"Completed, client IP: %s -> %d",ip, sockClient);
   srvlog(ss);
   return 0;
