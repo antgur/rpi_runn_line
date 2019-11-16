@@ -8,42 +8,39 @@ int srvlog(char *st)
   char ss[48];
   struct timeval tv;
   struct tm *t1;
-//    t=time(NULL);
-    time(&t);
-    t1=localtime(&t);
-        sprintf(ss,"%s/%04d/%02d/%s_%02d.log",LOG_PATH,
+  time(&t);
+  t1=localtime(&t);
+  sprintf(ss,"%s/%04d/%02d/%s_%02d.log",LOG_PATH,
         t1->tm_year+1900,t1->tm_mon+1,FILE_NAME,t1->tm_mday);
- sprintf(buf,"%s",st);
+  sprintf(buf,"%s",st);
   if ((fd = fopen(ss,"a")) == NULL)
   {
-//        printf("Failas neatsidaro\n");
-        //jeigu nera direktorijos
-        if (errno != ENOENT) return -1; //testi, jeigu nera direktorijos
+        //if the folder does not exist
+        if (errno != ENOENT) return -1; //continue if folder does not exist
         char pat[64];
         int er;
         sprintf(pat,"%s/%04d",LOG_PATH,t1->tm_year+1900);
-//        printf("Kelias = <%s>\n",pat);
         if ((er = mkdir(pat,S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH)) == -1)
         {
                 if (errno != EEXIST)
                 {
-                printf("Nepavyko: errno=%s,stat=%s\n",strerror(errno),strerror(EEXIST));
-                printf("Metams skirta direktorija nesusikuria\n");
-                return -1; // nepavyko su direktorija
+                printf("Problem: errno=%s,stat=%s\n",strerror(errno),strerror(EEXIST));
+                printf("Year dedicated folder could not be created\n");
+                return -1; // error with anually folder
                 }
         }
         sprintf(pat,"%s/%04d/%02d",LOG_PATH,t1->tm_year+1900,t1->tm_mon+1);
         if ((er = mkdir(pat,S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH)) == -1)
         {
-                printf("Menesiui skirta direktorija nesusikuria\n");
-                return -2; // nepavyko su direktorija
+                printf("Month dedicated folder could not be created\n");
+                return -2; // error with Monthly folder
         }
-        // jeigu pavyko - kartoju failo kurimo procedura
-        fd = fopen(ss,"a");// naujas failas
+        // repeating with file creation if folders correct
+        fd = fopen(ss,"a");// new file
         if (fd == NULL)
         {
-                printf("Failas neatsidaro\n");
-                return -3; //nepavyko
+                printf("File is not opening\n");
+                return -3; //File opening error
         }
   }
   gettimeofday(&tv,(struct timezone*)0);
