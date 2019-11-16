@@ -5,11 +5,11 @@ int ipcr_init()
   keyshm = ftok(KEY_PATH, KEY_SYMB2); //OTF
   if(keyshm == -1) return -1;
 
-  // atminties sukurimas
+  // Creating memory
   shmid = shmget(keyshm, sizeof(struct GpioData), (0644 | IPC_CREAT | IPC_EXCL));
-  if(shmid == -1) // gal but registruoja
+  if(shmid == -1) // registering
   {
-    if(errno == EEXIST)  // atmintis egzistuoja
+    if(errno == EEXIST)  // memory exists
     {
       shmid = shmget(keyshm, sizeof(struct GpioData), 0644);
       if(shmid == -1)
