@@ -175,33 +175,32 @@ static unsigned char cc[MAX_CHAR][8]={
 
   struct GpioData *mm;
 
-  // kuria atminti arba prie jos prisijungia
-  // grazina:
-  //  -1 ivykus klaidai
-  //  1 pasisekimo atveju
+  // creates SHM or connects to it
+  // returns:
+  //  -1 if error
+  //  1 if no error
   int ipcr_init();
-  //uzpilu IPC konstantomis
+  //filling IPC by constants
   int ipcr_fill();
-  //dedu eilini paketa i IPC
+  //put packet into IPC
   int ipcr_set(int data, int nr);
-  //istraukiu nurodyta paketa is IPC
+  //get selected packet from IPC
   int ipcr_get(int nr);
-  //irasau raides koda
+  //writing char code
   int ipcr_setchar(unsigned char ch[8], int nr);
-  //istraukiu raides koda
+  //reading char code
   unsigned char ipcr_getchar(int chnr, int nr);
-  //irasau raides indeksa i gala
+  //writing char's index at the end
   int ipcr_settx(int data);
-  //istraukiu pirmosios raides eilėje indeksa ir viska pastumiu i kaire
+  //retrieving first char's in queue index and shfting everything left
   int ipcr_gettx();
-  //pasalinu atminti
+  //removing memory
   int ipcr_destroy();
 
 #endif
-// vektoriaus da paskirtis pagal indeksus
-// 0	pagrindinis procesas veikia arba nulūžęs (1)
-// 1	tx eilutės paskutinio simbolio indeksas
-// 2	eilutės stūmimo smulkaus žingsnio konstanta
-// 3	raidės fiksavimo konstanta stumiant
-
+// da index values:
+// 0	main process running or broken (1)
+// 1	tx line's last character index
+// 2	shifting line 'small step' constant
+// 3	caracter's fixing constant when shift out
 
