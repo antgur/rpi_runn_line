@@ -1,6 +1,6 @@
 #include "main1.h"
 
-// startuoju programa, kuri atrisama nuo terminalo
+// starting program as system service
 
 int main()
 {
@@ -74,7 +74,7 @@ void init7219()
     return;
 }
 
-//signalo apdorojimo programa
+// signal processing
 void termination_handler (int signum)
 {
     ipcr_set(-2,1);
@@ -83,31 +83,31 @@ void termination_handler (int signum)
 }
 
 
-// pagrindine programa - jau atrista nuo terminalo
+// Main part just running as system service
 int pagr()
 {
-    char bu[80]; // log teksto buferis
-    unsigned long di[8]; //raidės imidžo šablonas
-    int ipc; //ipcs prisijungimo indikatorius
+    char bu[80]; // log text buffer
+    unsigned long di[8]; //char image template
+    int ipc; //ipcs connection indicator
     int i,k,ii;
-    for (i=0;i<8;i++) di[i]=0; //inicializuoju kintamaji
+    for (i=0;i<8;i++) di[i]=0; //init variable
 
     srvlog("Main module started");
-    //Bandau jungtis prie ipc
-    if ((ipc = ipcr_init()) < 0) //jeigu nepavyko
+    //Connecting to IPC
+    if ((ipc = ipcr_init()) < 0) // if not connected
     {
 	srvlog("Unfortunately, didn't connect to shmem...");
 	srvlog("Main module accidentally stopped.");
-	return -1; // programa baigia darba
-    } //Pavyko
-    //Bandau jungtis prie rpi PIO
-    if (gpioInitialise() < 0 ) //jeigu nepavyko
+	return -1; // program stopping
+    } // Ok
+    // Connecting to rpi PIO
+    if (gpioInitialise() < 0 ) // if not connected
     {
 	srvlog("Unfortunately, didn't connect to PIO...");
 	srvlog("Main module accidentally stopped.");
-	gpioTerminate(); // dėl visa ko
-	return -2; // programa baigia darba
-    } //Pavyko
+	gpioTerminate();
+	return -2; // program stopping
+    } // Ok
 
     ipcr_set(ipcr_get(0)+1,0);
 
@@ -121,37 +121,37 @@ int pagr()
 	signal(SIGKILL, SIG_IGN);
 
     init7219();
-// keli simboliai testui
+// few testing chars
 //    for (i=49;i<126;i++) ipcr_settx(i);
     for (i=49;i<56;i++) ipcr_settx(i);
-    ipcr_set(5,2); // postūmio konstanta
-    //Ciklas
+    ipcr_set(5,2); // shifting constant
+    // Cycle
     while (ipcr_get(1) >= 0)
     {
-	if (ipcr_get(1)==0) ipcr_settx(1); //jeigu eilėje nėra raidžių
-	ii = ipcr_gettx(); //ištraukiu rodomos raidės indeksą
-	// į di masyva padedu raidės trafaretą
+	if (ipcr_get(1)==0) ipcr_settx(1); // If queue is empty
+	ii = ipcr_gettx(); // reading showing char index
+	// move to the di array new char picture
 	for (ipc=0;ipc<8;ipc++) di[ipc] = di[ipc] + 256*ipcr_getchar(ii,ipc);
 
-	for (k=0;k<8;k++) { //vykdau išvedimą
-	    for (i=0;i<8;i++) MAX7219Send(8-i,di[i]);//išvedu raidę
-	    for (i=0;i<8;i++) di[i]=di[i] >> 1; //perstumiu per žingsnį
-	    gpioDelay(ipcr_get(2)*10000); // vėlinimas postūmio žingsniui
+	for (k=0;k<8;k++) { // processing 
+	    for (i=0;i<8;i++) MAX7219Send(8-i,di[i]);// printing character
+	    for (i=0;i<8;i++) di[i]=di[i] >> 1; // shift one step
+	    gpioDelay(ipcr_get(2)*10000); // one step dalay
 	}
-	// sustabdau raidę centre
+	// stop shifting at the center
 	if (ii == 1) gpioDelay(ipcr_get(2)*200000);
 	else gpioDelay(ipcr_get(2)*20000);
 //	time_sleep(2.0);
 	
     }
-    //Užgesinu visa matricą
+    // Turn off all matrix
     for (ipc=0;ipc<8;ipc++) MAX7219Send(ipc+1,ipcr_getchar(0,ipc));
-    // Programa planuotai stabdoma
-    // Atsijungiama nuo PIO
+    // Program stopping according to plan
+    // Disconnecting from PIO
     gpioTerminate();
     ipcr_set(0,0);
-    // Atsijungiama nuo shmem
+    // Disconnecting from IPC
     ipcr_destroy();
     srvlog("Main module stopped.");
-    return 0; //Pabaiga
+    return 0; // The end
 }
